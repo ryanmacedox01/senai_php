@@ -1,0 +1,81 @@
+Exercicios php do Ryan
+
+1- <?php
+$nome = "Ryan";
+$idade = 16;
+echo "Olá, meu nome é ".$nome ." e eu tenho ".$idade. " anos.";
+?>
+
+2- <?php
+$numero = 11;
+$numero2 = 10;
+if ($numero > $numero2) {
+echo "O número é maior que 10";
+} else {
+    echo "O número é menor que 10";
+}
+?>
+
+3- <?php
+$notamedia = 7;
+$nota = 8;
+if ($nota>=$notamedia) {
+echo "Aprovado";
+} else {
+    echo "Reprovado";
+}
+?>
+
+4- <?php
+$idade = 14;
+$criança = 11;
+$adolescente = 17;
+$adulto = 18;
+if ($idade<=$criança) {
+    echo "A pessoa é criança";
+    }
+    elseif ($idade>$adolescente) {
+         echo "A pessoa é adulto";
+    }
+    else {
+         echo "A pessoa é adolescente";
+    }
+?>
+
+5- <?php
+$x = 1;
+while ($x < 6) {
+    echo "n°".$x. "<br>";
+    $x++;
+}
+?>
+
+6- <?php
+$numtab = 2;
+for ($i=0; $i<=5; $i++) {
+    echo $numtab. " X ". $i. " = " .$numtab*$i. "<br>";
+}
+?>
+
+7- <?php
+$frutas = array("maçã, banana, laranja, morango, uva");
+foreach ($frutas as $fruta);
+    echo $fruta."<br>";
+?>
+
+8- <?php
+$numtab = 1;
+for ($i=1; $i <=100; $i++) {
+    echo $numtab. " + ". $i. " = " .$numtab*$i. "<br>";
+}
+
+9- <?php
+$num = rand (0, 10);
+$par = [0,2,4,6,8,10];
+$impar = [1,3,5,7,9];
+if ($num == $par) {
+    echo "O ".$num." é par";
+}
+elseif ($num == $impar) {
+     echo "O " .$num. " é ímpar";
+}
