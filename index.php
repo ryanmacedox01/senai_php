@@ -1,39 +1,110 @@
 <?php
-    $nome = "Ryan";
-    $idade = 16;
-    echo "Meu nome é ".$nome.", e tenho ".$idade." anos.";
-    echo "<hr>";
-    echo "<center><h2>SENAI - DEVELOPER</h2></center>";
-    echo "<hr>";
-    $valor1 = 8;
-    $valor2 = 11;
-    echo "A soma dos valores foi:".$valor1+$valor2."<br>";
-    echo "A subtração dos valores foi:".$valor1-$valor2."<br>";
-    echo "A multiplicação dos valores foi:".$valor1*$valor2."<br>";
-    $result = $valor1/$valor2;
-    $numformatado = number_format($result, 2, ',', '.');
-    echo "A divisão dos valores foi:".$numformatado;
-    echo "<hr>";
-    $datahora = date('d/m/Y H:i:s');
-    echo "Data atual: ".$datahora;
-    echo "<hr>";
-    $data1 = new DateTime('2025-01-01');
-    //Data: 2025-01-01 22:30:23 = Y-m-d H:i:s
-    $data2 = new DateTime('2025-08-06');
-    $intervalo = $data1 ->diff($data2);
-    echo "A diferença em anos: ".$intervalo->y."<br>";
-    echo "A diferença em meses: ".$intervalo->m."<br>";
-    echo "A diferença em dias: ".$intervalo->days."<br>";
-    $horas = $intervalo->days*24;
-    echo "A diferença em horas: ".$horas;
-    echo "<hr>";
-    echo "<h2>Função Condicional - IF</h2>";
-    $a = 3;
-    $b = 5;
-    if ($a > $b) {
-        echo "A é maior que B!";
-    } else {
-        echo "B é maior que A!";
+    session_start();
+    if (!isset($_SESSION['pessoas'])) {
+        $_SESSION['pessoas'] = [];
     }
-    echo "<br>Saiu do IF";
+    $id_edicao = null;
+    $nome_edicao = '';
+    $email_edicao = '';
+    $celular_edicao = '';
+    $modo_edicao = false;
+    //coração do CRUD
+    //DELETE via GET
+    if (isset($_GET['acao']) && $_GET['acao'] == 'deletar' && isset($_GET['id'])) {
+        $id_para_deletar = $_GET['id'];
+        foreach ($_SESSION['pessoas'] as $indice => $pessoa) {
+            if ($pessoa['id'] == $id_para_deletar) {
+                unset($_SESSION['pessoas'][$indice]);
+                break;
+            }
+        }
+        header('Location: index.php');
+        exit;
+    }
+    //Preparar a edição
+    if (isset($_GET['acao']) && $_GET['acao'] == 'editar' && isset($_GET['id'])) {
+        $id_para_editar = $_GET['id'];
+        foreach ($_SESSION['pessoas'] as $pessoa) {
+            if ($pessoa['id'] == $id_para_editar) {
+                $id_edicao = $pessoa['id'];
+                $nome_edicao = $pessoa['nome'];
+                $email_edicao = $pessoa['email'];
+                $celular_edicao = $pessoa['celular'];
+                $modo_edicao = true; //ativa a edicao no form
+                break;
+            }
+        }
+    }
+    //criar e atualizar via POST
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $nome = $_POST['nome'];
+        $email = $_POST['email'];
+        $celular = $_POST['celular'];
+        //atualizar
+        if (isset($_POST['id']) && !empty($_POST['id'])) {
+            $id_para_atualizar = $_POST['id'];
+            foreach ($_SESSION['pessoas'] as $indice => $pessoa) {
+                if ($pessoa['id'] == $id_para_atualizar) {
+                    $_SESSION['pessoas'][$indice]['nome'] = $nome;
+                    $_SESSION['pessoas'][$indice]['email'] = $email;
+                    $_SESSION['pessoas'][$indice]['celular'] = $celular;
+                    break;
+                }
+            }
+        }
+        //criar
+        else {
+            $nova_pessoa = [
+                'id' => uniqid(),
+                'nome' => $nome,
+                'email' => $email,
+                'celular' => $celular
+            ];
+            $_SESSION['pessoas'][] = $nova_pessoa;
+        }
+        header('Location: index.php');
+        exit;
+    }
 ?>
+<DOCTYPE html>
+    <html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content= "widht=device-width, initial-scale=1.0">
+    <title>CRUD - php/Array</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px;}
+        h1, h2 {color: #333;}
+        .container { max-width: 800px; margin: auto; }
+        form { margin-bottom: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 5px; }
+        form div{ margin-botton: 10px;}
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="email"] { width: calc(100%-16px); padding: 8px; border: 1px solid #ccc; border-radius: 3px;}
+        button { padding: 10px 15px; background-color: #28a745; color : white; border: none; border-radius: 3px; cursor: pointer; }
+        button.update { background-color: #007bff; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd;; padding: 8px; text-align: left;}
+        th {background-color: #f2f2f2; }
+        a { color: #007bff; text- decoration: none; }
+        a.delete { color: #dc3545; margin-left: 10px; }
+
+            </style>
+        </head>
+        <body>
+            <div class= "container">
+                <h1>CADASTRO DE PESSOAS</h1>
+                <form action= "index.php" method= "POST">
+                    <input type="hidden" name= "id" value="<?php echo $id_edicao; ?>">
+                    <div>
+                        <label for="nome">Nome:</label>
+                        <input type="text" id="nome" value="<?php echo htmlspecialchars($nome_edicao); ?>" required>
+                    </div><div>
+                        <label for="email">Nome:</label>
+                        <input type="email" id="email" value="<?php echo htmlspecialchars($email_edicao); ?>" required>
+                    </div><div>
+                        <label for="celular">Nome:</label>
+                        <input type="text" id="celular" value="<?php echo htmlspecialchars($celular_edicao); ?>" required>
+                    </div>
+        </form>
+        </body>
+    </html>
